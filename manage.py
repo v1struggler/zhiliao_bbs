@@ -4,7 +4,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from zhiliao_bbs import create_app
 from exts import db
-from apps.cms import models as cms_models   # 只要导入模块就能映射模块里面的所有模型
+from apps.cms import models as cms_models  # 只要导入模块就能映射模块里面的所有模型
 
 app = create_app()
 manager = Manager(app)  # 创建manager需要绑定app
@@ -12,6 +12,7 @@ Migrate(app, db)  # 将app、db与Migrate绑定
 manager.add_command('db', MigrateCommand)  # 将MigrateCommand中的命令添加到manager对象中
 
 CMSUser = cms_models.CMSUser
+
 
 # 通过flask_script中的manager，利用运行脚本的形式来创建用户
 @manager.option('-u', '--username', dest='username')
