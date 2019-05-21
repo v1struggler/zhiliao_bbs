@@ -7,5 +7,4 @@ bp = Blueprint("common", __name__, url_prefix='/common')
 
 @bp.route('/')
 def index():
-    # g.cms_user
     return "common index"
