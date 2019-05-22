@@ -1,6 +1,9 @@
 # 定义视图
 
-from flask import Blueprint, views, render_template
+from flask import Blueprint, views, render_template, request, session, redirect, url_for
+
+from .models import CMSUser
+from .forms import LoginForm
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
 
@@ -12,11 +15,27 @@ def index():
 
 class LoginView(views.MethodView):
 
-    def get(self):
-        return render_template('cms/cms_login.html')
+    def get(self, message=None):
+        return render_template('cms/cms_login.html', message=message)
 
     def post(self):
-        pass
+        form = LoginForm(request.form)
+        if form.validate():
+            email = form.email.data
+            password = form.password.data
+            remember = form.remember.data
+            user = CMSUser.query.filter_by(email=email).first()
+            if user and user.check_password(password):
+                session["user.id"] = user.id
+                if remember:
+                    # 如果设置session.permanent = True：那么过期时间是31天
+                    session.permanent = True
+                return redirect(url_for('cms.index'))   # 翻转的时候一定要加蓝图的名称
+            else:
+                return self.get(message='邮箱或密码错误')
+        else:
+            message = form.errors.popitem()[1][0]       # popitem返回字典里面的任意项 ("password",["请输入正确的面"])
+            return self.get(message=message)
 
 
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
