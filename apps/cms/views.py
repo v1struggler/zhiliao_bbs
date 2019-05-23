@@ -1,6 +1,6 @@
 # 定义视图
 
-from flask import Blueprint, views, render_template, request, session, redirect, url_for
+from flask import Blueprint, views, render_template, request, session, redirect, url_for, g
 
 from .models import CMSUser
 from .forms import LoginForm
@@ -13,7 +13,13 @@ bp = Blueprint("cms", __name__, url_prefix='/cms')
 @bp.route('/')
 @login_required
 def index():
-    return "cms index"
+    return render_template('cms/cms_index.html')
+
+@bp.route('/logout/')
+@login_required
+def logout():
+    del session[config.CMS_USER_ID]
+    return redirect(url_for('cms.login'))
 
 
 class LoginView(views.MethodView):
