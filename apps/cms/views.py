@@ -4,11 +4,14 @@ from flask import Blueprint, views, render_template, request, session, redirect,
 
 from .models import CMSUser
 from .forms import LoginForm
+from .decorators import login_required
+import config
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
 
 
 @bp.route('/')
+@login_required
 def index():
     return "cms index"
 
@@ -26,7 +29,7 @@ class LoginView(views.MethodView):
             remember = form.remember.data
             user = CMSUser.query.filter_by(email=email).first()
             if user and user.check_password(password):
-                session["user.id"] = user.id
+                session[config.CMS_USER_ID] = user.id     # 由于前台也需要登录所以对"user.id"进行优化，"user.id"就是一个标识而已；
                 if remember:
                     # 如果设置session.permanent = True：那么过期时间是31天
                     session.permanent = True

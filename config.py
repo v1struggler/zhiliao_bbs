@@ -18,3 +18,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False  # 与跟踪相关，True：一旦模型�
 
 # 使用session就需要设置SECRET_KEY
 SECRET_KEY = os.urandom(24)
+
+
+CMS_USER_ID = 'ASDFASDFSA'
