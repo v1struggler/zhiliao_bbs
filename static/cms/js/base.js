@@ -23,11 +23,11 @@ $(function () {
 
 
 $(function () {
-    var url = window.location.href;
-    if(url.indexOf('profile') >= 0){
+    var url = window.location.href;     //拿到当前页面对应的url
+    if(url.indexOf('profile') >= 0){    //判断url中有没有profile这个字符串，有就返回这个字符串的位置
         var profileLi = $('.profile-li');
-        profileLi.addClass('unfold').siblings().removeClass('unfold');
-        profileLi.children('.subnav').children().eq(0).addClass('active').siblings().removeClass('active');
+        profileLi.addClass('unfold').siblings().removeClass('unfold');        //展开
+        profileLi.children('.subnav').children().eq(0).addClass('active').siblings().removeClass('active');   //给profileLi添加class = active，其他兄弟元素移除
     } else if(url.indexOf('resetpwd') >= 0){
         var profileLi = $('.profile-li');
         profileLi.addClass('unfold').siblings().removeClass('unfold');
