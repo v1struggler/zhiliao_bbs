@@ -29,6 +29,7 @@ def profile():
     return render_template('cms/cms_profile.html')
 
 
+# 登录界面
 class LoginView(views.MethodView):
 
     def get(self, message=None):
@@ -54,4 +55,31 @@ class LoginView(views.MethodView):
             return self.get(message=message)
 
 
+# 修改密码
+class ResetPwdView(views.MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('cms/cms_resetpwd.html')
+
+    def post(self):
+        pass
+        # form = ResetpwdForm(request.form)
+        # if form.validate():
+        #     oldpwd = form.oldpwd.data
+        #     newpwd = form.newpwd.data
+        #     user = g.cms_user
+        #     if user.check_password(oldpwd):
+        #         user.password = newpwd
+        #         db.session.commit()
+        #         # {"code":200,message=""}
+        #         # return jsonify({"code":200,"message":""})
+        #         return restful.success()
+        #     else:
+        #         return restful.params_error("旧密码错误！")
+        # else:
+        #     return restful.params_error(form.get_error())
+
+
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
+bp.add_url_rule('/resetpwd/', view_func=ResetPwdView.as_view('resetpwd'))
