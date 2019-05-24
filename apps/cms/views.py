@@ -17,6 +17,7 @@ from .forms import LoginForm, ResetpwdForm
 from .decorators import login_required
 import config
 from exts import db
+from utils import restful
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
 
@@ -62,7 +63,7 @@ class LoginView(views.MethodView):
             else:
                 return self.get(message='邮箱或密码错误')
         else:
-            #message = form.errors.popitem()[1][0]  # popitem返回字典里面的任意项 ("password",["请输入正确的面"])
+            # message = form.errors.popitem()[1][0]  # popitem返回字典里面的任意项 ("password",["请输入正确的面"])
             message = form.get_error()
             return self.get(message=message)
 
@@ -84,15 +85,16 @@ class ResetPwdView(views.MethodView):
                 user.password = newpwd
                 db.session.commit()
                 # 因为前端是使用的ajax，所以这里要返回json数据：{"code":200,message=""}
-                return jsonify({"code":200,"message":""})
-                #return restful.success()
+                # return jsonify({"code": 200, "message": ""})
+                return restful.success()  # 使用restful风格，但是没有使用flask-restful框架，比较麻烦，app/ios都是使用json数据的，所以用restful比较方便
             else:
-                #return restful.params_error("旧密码错误！")
-                return jsonify({"code": 400, "message": "旧密码错误！"})
+                # return jsonify({"code": 400, "message": "旧密码错误！"})
+                return restful.params_error("旧密码错误！")
+
         else:
-            #return restful.params_error(form.get_error())
-            message = form.get_error()
-            return jsonify({"code": 400, "message": message})
+            # message = form.get_error()
+            # return jsonify({"code": 400, "message": message})
+            return restful.params_error(form.get_error())
 
 
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
