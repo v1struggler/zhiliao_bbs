@@ -1,11 +1,22 @@
 # 定义视图
 
-from flask import Blueprint, views, render_template, request, session, redirect, url_for, g
+from flask import (
+    Blueprint,
+    views,
+    render_template,
+    request,
+    session,
+    redirect,
+    url_for,
+    g,
+    jsonify
+)
 
 from .models import CMSUser
-from .forms import LoginForm
+from .forms import LoginForm, ResetpwdForm
 from .decorators import login_required
 import config
+from exts import db
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
 
@@ -51,7 +62,8 @@ class LoginView(views.MethodView):
             else:
                 return self.get(message='邮箱或密码错误')
         else:
-            message = form.errors.popitem()[1][0]  # popitem返回字典里面的任意项 ("password",["请输入正确的面"])
+            #message = form.errors.popitem()[1][0]  # popitem返回字典里面的任意项 ("password",["请输入正确的面"])
+            message = form.get_error()
             return self.get(message=message)
 
 
@@ -63,22 +75,24 @@ class ResetPwdView(views.MethodView):
         return render_template('cms/cms_resetpwd.html')
 
     def post(self):
-        pass
-        # form = ResetpwdForm(request.form)
-        # if form.validate():
-        #     oldpwd = form.oldpwd.data
-        #     newpwd = form.newpwd.data
-        #     user = g.cms_user
-        #     if user.check_password(oldpwd):
-        #         user.password = newpwd
-        #         db.session.commit()
-        #         # {"code":200,message=""}
-        #         # return jsonify({"code":200,"message":""})
-        #         return restful.success()
-        #     else:
-        #         return restful.params_error("旧密码错误！")
-        # else:
-        #     return restful.params_error(form.get_error())
+        form = ResetpwdForm(request.form)
+        if form.validate():
+            oldpwd = form.oldpwd.data
+            newpwd = form.newpwd.data
+            user = g.cms_user
+            if user.check_password(oldpwd):
+                user.password = newpwd
+                db.session.commit()
+                # 因为前端是使用的ajax，所以这里要返回json数据：{"code":200,message=""}
+                return jsonify({"code":200,"message":""})
+                #return restful.success()
+            else:
+                #return restful.params_error("旧密码错误！")
+                return jsonify({"code": 400, "message": "旧密码错误！"})
+        else:
+            #return restful.params_error(form.get_error())
+            message = form.get_error()
+            return jsonify({"code": 400, "message": message})
 
 
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
