@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="{{ static('cms/css/base.css') }}">
     <script src="{{ static('cms/js/base.js') }}"></script>
     <script src="{{ url_for('static',filename="common/zlajax.js") }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename="common/sweetalert/sweetalert.css") }}">
+    <script src="{{ url_for('static',filename="common/sweetalert/sweetalert.min.js") }}"></script>
+    <script src="{{ url_for('static',filename="common/sweetalert/zlalert.js") }}"></script>
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -29,7 +32,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url_for('cms.profile') }}">{{ g.cms_user.username }}</a></li>      {#使用g对象来渲染前端模板#}
+                <li><a href="{{ url_for('cms.profile') }}">{{ g.cms_user.username }}</a></li>
+                {#使用g对象来渲染前端模板#}
                 <li><a href="{{ url_for('cms.logout') }}">注销</a></li>
             </ul>
             <form class="navbar-form navbar-right">
