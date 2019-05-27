@@ -6,7 +6,7 @@ from apps.cms import bp as cms_bp
 from apps.front import bp as front_bp
 from apps.common import bp as common_bp
 import config
-from exts import db
+from exts import db, mail
 from flask_wtf import CSRFProtect
 
 
@@ -21,6 +21,7 @@ def create_app():
 
     db.init_app(app)  # 将db注册进app
     CSRFProtect(app)  # 将CSRFProtect()包装app
+    mail.init_app(app)   # 将mail与app进行绑定
 
     return app
 

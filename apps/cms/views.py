@@ -1,4 +1,5 @@
 # 定义视图
+import random
 
 from flask import (
     Blueprint,
@@ -16,8 +17,10 @@ from .models import CMSUser
 from .forms import LoginForm, ResetpwdForm
 from .decorators import login_required
 import config
-from exts import db
+from exts import db, mail
+from flask_mail import Message
 from utils import restful
+import string
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
 
@@ -97,5 +100,52 @@ class ResetPwdView(views.MethodView):
             return restful.params_error(form.get_error())
 
 
+# 发送邮箱验证码，没有指定methed那么默认就是get
+@bp.route('/email_captcha/')
+def email_captcha():
+
+    # 通过传递字符串的方式获取URL：/email_capthca/?email=xxx@qq.com
+    email = request.args.get('email')
+    if not email:
+        return restful.params_error('请传递邮箱参数！')         # 因为数据是通过AJXA传输的，所以要返回json格式的数据
+
+    # 生成验证码
+    source = list(string.ascii_letters)                         # string.ascii_letters：返回小写大写的a-z，将字符串转换成列表就可以向列表里面添加值了
+    # source.extend(["0","1","2","3","4","5","6","7","8","9"])
+    source.extend(map(lambda x: str(x), range(0, 10)))          # 将数字添加进列表
+    captcha = "".join(random.sample(source, 6))
+
+    # 给这个邮箱发送邮件
+    message = Message('Python论坛邮箱验证码', recipients=[email], body='您的验证码是：%s' % captcha)
+    try:
+        mail.send(message)                                      # 同步的方式发送：可以通过URL来测试是否可以发送邮箱，接口是否能用
+        #send_mail.delay(message)
+    except:
+        return restful.server_error()
+    #zlcache.set(email, captcha)
+    return restful.success()
+
+
+# 修改邮箱
+class ResetEmailView(views.MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('cms/cms_resetemail.html')
+
+    def post(self):
+        pass
+        # form = ResetEmailForm(request.form)
+        # if form.validate():
+        #     email = form.email.data
+        #     g.cms_user.email = email
+        #     db.session.commit()
+        #     return restful.success()
+        # else:
+        #     return restful.params_error(form.get_error())
+
+
+# 此处定义的url必须与base.js中指定的url一样，这样选中的时候才会有颜色变化；
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 bp.add_url_rule('/resetpwd/', view_func=ResetPwdView.as_view('resetpwd'))
+bp.add_url_rule('/resetemail/', view_func=ResetEmailView.as_view('resetemail'))
