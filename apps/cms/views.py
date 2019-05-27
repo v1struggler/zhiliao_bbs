@@ -14,12 +14,12 @@ from flask import (
 )
 
 from .models import CMSUser
-from .forms import LoginForm, ResetpwdForm
+from .forms import LoginForm, ResetpwdForm, ResetEmailForm
 from .decorators import login_required
 import config
 from exts import db, mail
 from flask_mail import Message
-from utils import restful
+from utils import restful, zlcache
 import string
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
@@ -122,7 +122,7 @@ def email_captcha():
         #send_mail.delay(message)
     except:
         return restful.server_error()
-    #zlcache.set(email, captcha)
+    zlcache.set(email, captcha)                 # 发送完验证码，将邮箱和验证码存储到memcache当中
     return restful.success()
 
 
@@ -134,15 +134,14 @@ class ResetEmailView(views.MethodView):
         return render_template('cms/cms_resetemail.html')
 
     def post(self):
-        pass
-        # form = ResetEmailForm(request.form)
-        # if form.validate():
-        #     email = form.email.data
-        #     g.cms_user.email = email
-        #     db.session.commit()
-        #     return restful.success()
-        # else:
-        #     return restful.params_error(form.get_error())
+        form = ResetEmailForm(request.form)
+        if form.validate():
+            email = form.email.data
+            g.cms_user.email = email
+            db.session.commit()
+            return restful.success()
+        else:
+            return restful.params_error(form.get_error())
 
 
 # 此处定义的url必须与base.js中指定的url一样，这样选中的时候才会有颜色变化；
