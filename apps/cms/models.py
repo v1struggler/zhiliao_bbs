@@ -5,7 +5,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-# 不能通过用户直接拿到权限，而是：用户—角色—权限
+# 定义权限模型：不能通过用户直接拿到权限，而是：用户—角色—权限
 class CMSPersmission(object):
     # 255的二进制方式来表示 0b1111 1111
     ALL_PERMISSION = 0b11111111
@@ -63,14 +63,38 @@ class CMSUser(db.Model):
         self.password = password
         self.email = email
 
-    @property  # 将类中的方法定义成属性
+    @property                                   # 将类中的方法定义成属性，访问密码
     def password(self):
         return self._password
 
-    @password.setter
+    @password.setter                            # 设置密码，给password赋值就会访问这个函数
     def password(self, raw_password):
         self._password = generate_password_hash(raw_password)
 
     def check_password(self, raw_password):
         result = check_password_hash(self.password, raw_password)
         return result
+
+    @property
+    def permissions(self):                     # 获得用户的所有权限
+        if not self.roles:
+            return 0
+        all_permissions = 0
+        for role in self.roles:
+            permissions = role.permissions
+            all_permissions |= permissions
+        return all_permissions
+
+    def has_permission(self, permission):     # 判断用户是否有某个权限
+        # all_permissions = self.permissions
+        # result = all_permissions&permission == permission
+        # return result
+        """
+        判断某个用户有没有某个权限（a）：
+            只要将需要对比的用户的权限和a权限的二进制码进行与运算，如果得到的结果和a相等，那么就代表这个用户有a这个权限，否则代表没有。
+        """
+        return self.permissions & permission == permission
+
+    @property
+    def is_developer(self):                  # 判断是否是开发者：有些视图函数需要判断用户是否是开发者
+        return self.has_permission(CMSPersmission.ALL_PERMISSION)

@@ -51,10 +51,37 @@ def create_role():
     db.session.commit()
 
 
+@manager.option('-e', '--email', dest='email')
+@manager.option('-n', '--name', dest='name')
+def add_user_to_role(email, name):
+    user = CMSUser.query.filter_by(email=email).first()
+    if user:
+        role = CMSRole.query.filter_by(name=name).first()
+        if role:
+            role.users.append(user)
+            db.session.commit()
+            print('用户添加到角色成功！')
+        else:
+            print('没有这个角色：%s' % role)
+    else:
+        print('%s邮箱没有这个用户!' % email)
+
+
+@manager.command
+def test_permission():                                    # 测试权限
+    user = CMSUser.query.first()
+    if user.is_developer:
+        print('这个用户有访问者的权限！')
+    else:
+        print('这个用户没有访问者权限！')
+
+
 if __name__ == '__main__':
     # python manage.py db init   初始化
     # python manage.py db migrate    创建迁移脚本
     # python manage.py db upgrade    映射到数据库中
     # python manage.py create_cms_user -u zhiliao -p 123456 -e 714464655@qq.com    创建cms用户
     # python manage.py create_role          创建角色
+    # python manage.py test_permission   测试权限
+    # python manage.py add_user_to_role -e 714464655@qq.com -n 开发者     添加权限
     manager.run()
