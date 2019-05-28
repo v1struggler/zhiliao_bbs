@@ -13,9 +13,9 @@ from flask import (
     jsonify
 )
 
-from .models import CMSUser
+from .models import CMSUser, CMSPersmission
 from .forms import LoginForm, ResetpwdForm, ResetEmailForm
-from .decorators import login_required
+from .decorators import login_required, permission_required
 import config
 from exts import db, mail
 from flask_mail import Message
@@ -42,6 +42,53 @@ def logout():
 @login_required
 def profile():
     return render_template('cms/cms_profile.html')
+
+
+@bp.route('/posts/')
+@login_required
+@permission_required(CMSPersmission.POSTER)
+def posts():
+    #posts = PostModel.query.all()
+    return render_template('cms/cms_posts.html')
+
+
+@bp.route('/comments/')
+@login_required
+@permission_required(CMSPersmission.COMMENTER)
+def comments():
+    return render_template('cms/cms_comments.html')
+
+
+@bp.route('/boards/')
+@login_required
+@permission_required(CMSPersmission.BOARDER)
+def boards():
+    #board_models = BoardModel.query.all()
+    # context = {
+    #     'boards': board_models
+    # }
+    return render_template('cms/cms_boards.html')
+
+
+@bp.route('/fusers/')
+@login_required
+@permission_required(CMSPersmission.FRONTUSER)
+def fusers():
+    return render_template('cms/cms_fusers.html')
+
+
+@bp.route('/cusers/')
+@login_required
+@permission_required(CMSPersmission.CMSUSER)
+def cusers():
+    return render_template('cms/cms_cusers.html')
+
+
+@bp.route('/croles/')
+@login_required
+@permission_required(CMSPersmission.ALL_PERMISSION)
+def croles():
+    return render_template('cms/cms_croles.html')
 
 
 # 登录界面
@@ -103,26 +150,25 @@ class ResetPwdView(views.MethodView):
 # 发送邮箱验证码，没有指定methed那么默认就是get
 @bp.route('/email_captcha/')
 def email_captcha():
-
     # 通过传递字符串的方式获取URL：/email_capthca/?email=xxx@qq.com
     email = request.args.get('email')
     if not email:
-        return restful.params_error('请传递邮箱参数！')         # 因为数据是通过AJXA传输的，所以要返回json格式的数据
+        return restful.params_error('请传递邮箱参数！')  # 因为数据是通过AJXA传输的，所以要返回json格式的数据
 
     # 生成验证码
-    source = list(string.ascii_letters)                         # string.ascii_letters：返回小写大写的a-z，将字符串转换成列表就可以向列表里面添加值了
+    source = list(string.ascii_letters)  # string.ascii_letters：返回小写大写的a-z，将字符串转换成列表就可以向列表里面添加值了
     # source.extend(["0","1","2","3","4","5","6","7","8","9"])
-    source.extend(map(lambda x: str(x), range(0, 10)))          # 将数字添加进列表
+    source.extend(map(lambda x: str(x), range(0, 10)))  # 将数字添加进列表
     captcha = "".join(random.sample(source, 6))
 
     # 给这个邮箱发送邮件
     message = Message('Python论坛邮箱验证码', recipients=[email], body='您的验证码是：%s' % captcha)
     try:
-        mail.send(message)                                      # 同步的方式发送：可以通过URL来测试是否可以发送邮箱，接口是否能用
-        #send_mail.delay(message)
+        mail.send(message)  # 同步的方式发送：可以通过URL来测试是否可以发送邮箱，接口是否能用
+        # send_mail.delay(message)
     except:
         return restful.server_error()
-    zlcache.set(email, captcha)                 # 发送完验证码，将邮箱和验证码存储到memcache当中
+    zlcache.set(email, captcha)  # 发送完验证码，将邮箱和验证码存储到memcache当中
     return restful.success()
 
 
