@@ -7,11 +7,14 @@ from exts import db
 from apps.cms import models as cms_models  # 只要导入模块就能映射模块里面的所有模型
 
 app = create_app()
-manager = Manager(app)  # 创建manager需要绑定app
-Migrate(app, db)  # 将app、db与Migrate绑定
-manager.add_command('db', MigrateCommand)  # 将MigrateCommand中的命令添加到manager对象中
+manager = Manager(app)              # 创建manager需要绑定app
+Migrate(app, db)                    # 将app、db与Migrate绑定
+manager.add_command('db', MigrateCommand)           # 将MigrateCommand中的命令添加到manager对象中
+
 
 CMSUser = cms_models.CMSUser
+CMSRole = cms_models.CMSRole
+CMSPermission = cms_models.CMSPersmission
 
 
 # 通过flask_script中的manager，利用运行脚本的形式来创建用户
@@ -25,9 +28,33 @@ def create_cms_user(username, password, email):
     print('cms用户添加成功！')
 
 
+# 利用脚本(命令)的方式来创建角色：因为角色定义好就不会有太大的改变，所以用这种方式创建
+@manager.command
+def create_role():
+    # 1. 访问者（可以修改个人信息）
+    visitor = CMSRole(name='访问者', desc='只能相关数据，不能修改。')
+    visitor.permissions = CMSPermission.VISITOR
+
+    # 2. 运营角色（修改个人个人信息，管理帖子，管理评论，管理前台用户）
+    operator = CMSRole(name='运营', desc='管理帖子，管理评论,管理前台用户。')    # 使用二进制的或运算将不同的权限组合到一起
+    operator.permissions = CMSPermission.VISITOR | CMSPermission.POSTER | CMSPermission.CMSUSER | CMSPermission.COMMENTER | CMSPermission.FRONTUSER
+
+    # 3. 管理员（拥有绝大部分权限）
+    admin = CMSRole(name='管理员', desc='拥有本系统所有权限。')
+    admin.permissions = CMSPermission.VISITOR | CMSPermission.POSTER | CMSPermission.CMSUSER | CMSPermission.COMMENTER | CMSPermission.FRONTUSER | CMSPermission.BOARDER
+
+    # 4. 开发者
+    developer = CMSRole(name='开发者', desc='开发人员专用角色。')
+    developer.permissions = CMSPermission.ALL_PERMISSION
+
+    db.session.add_all([visitor, operator, admin, developer])
+    db.session.commit()
+
+
 if __name__ == '__main__':
     # python manage.py db init   初始化
     # python manage.py db migrate    创建迁移脚本
     # python manage.py db upgrade    映射到数据库中
-    # python manage.py create_cms_user -u zhiliao -p 123456 -e 714464655@qq.com    映射到数据库中
+    # python manage.py create_cms_user -u zhiliao -p 123456 -e 714464655@qq.com    创建cms用户
+    # python manage.py create_role          创建角色
     manager.run()
