@@ -37,7 +37,7 @@ def create_role():
 
     # 2. 运营角色（修改个人个人信息，管理帖子，管理评论，管理前台用户）
     operator = CMSRole(name='运营', desc='管理帖子，管理评论,管理前台用户。')    # 使用二进制的或运算将不同的权限组合到一起
-    operator.permissions = CMSPermission.VISITOR | CMSPermission.POSTER | CMSPermission.CMSUSER | CMSPermission.COMMENTER | CMSPermission.FRONTUSER
+    operator.permissions = CMSPermission.VISITOR | CMSPermission.POSTER | CMSPermission.COMMENTER | CMSPermission.FRONTUSER
 
     # 3. 管理员（拥有绝大部分权限）
     admin = CMSRole(name='管理员', desc='拥有本系统所有权限。')
@@ -84,4 +84,7 @@ if __name__ == '__main__':
     # python manage.py create_role          创建角色
     # python manage.py test_permission   测试权限
     # python manage.py add_user_to_role -e 714464655@qq.com -n 开发者     添加权限
+
+    # python manage.py create_cms_user -u 我是访问者 -p 123456 -e 714464656@qq.com           # 7 运营 8 管理员
+    # python manage.py add_user_to_role -e 714464656@qq.com -n 访问者
     manager.run()
