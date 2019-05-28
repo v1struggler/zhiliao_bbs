@@ -5,6 +5,7 @@ from flask_migrate import Migrate, MigrateCommand
 from zhiliao_bbs import create_app
 from exts import db
 from apps.cms import models as cms_models  # 只要导入模块就能映射模块里面的所有模型
+from apps.front import models as front_models
 
 app = create_app()
 manager = Manager(app)              # 创建manager需要绑定app
@@ -15,9 +16,9 @@ manager.add_command('db', MigrateCommand)           # 将MigrateCommand中的命
 CMSUser = cms_models.CMSUser
 CMSRole = cms_models.CMSRole
 CMSPermission = cms_models.CMSPersmission
+FrontUser = front_models.FrontUser
 
-
-# 通过flask_script中的manager，利用运行脚本的形式来创建用户
+# 通过flask_script中的manager，利用运行脚本的形式来创建cms用户
 @manager.option('-u', '--username', dest='username')
 @manager.option('-p', '--password', dest='password')
 @manager.option('-e', '--email', dest='email')
@@ -51,6 +52,7 @@ def create_role():
     db.session.commit()
 
 
+# 添加权限
 @manager.option('-e', '--email', dest='email')
 @manager.option('-n', '--name', dest='name')
 def add_user_to_role(email, name):
@@ -66,7 +68,7 @@ def add_user_to_role(email, name):
     else:
         print('%s邮箱没有这个用户!' % email)
 
-
+# 测试权限
 @manager.command
 def test_permission():                                    # 测试权限
     user = CMSUser.query.first()
@@ -76,10 +78,21 @@ def test_permission():                                    # 测试权限
         print('这个用户没有访问者权限！')
 
 
+# 创建front用户
+@manager.option('-t', '--telephone', dest='telephone')
+@manager.option('-u', '--username', dest='username')
+@manager.option('-p', '--password', dest='password')
+def create_front_user(telephone, username, password):
+    user = FrontUser(telephone=telephone, username=username, password=password)
+    db.session.add(user)
+    db.session.commit()
+
+
 if __name__ == '__main__':
     # python manage.py db init   初始化
     # python manage.py db migrate    创建迁移脚本
     # python manage.py db upgrade    映射到数据库中
+
     # python manage.py create_cms_user -u zhiliao -p 123456 -e 714464655@qq.com    创建cms用户
     # python manage.py create_role          创建角色
     # python manage.py test_permission   测试权限
@@ -87,4 +100,6 @@ if __name__ == '__main__':
 
     # python manage.py create_cms_user -u 我是访问者 -p 123456 -e 714464656@qq.com           # 7 运营 8 管理员
     # python manage.py add_user_to_role -e 714464656@qq.com -n 访问者
+
+    # python manage.py create_front_user -t 13309567820 -u zhiliao -p 123456
     manager.run()
