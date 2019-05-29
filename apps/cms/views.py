@@ -150,7 +150,7 @@ class ResetPwdView(views.MethodView):
 # 发送邮箱验证码，没有指定methed那么默认就是get
 @bp.route('/email_captcha/')
 def email_captcha():
-    # 通过传递字符串的方式获取URL：/email_capthca/?email=xxx@qq.com
+    # 通过传递字符串的方式获取URL：/email_capthca/?email=714464655@qq.com
     email = request.args.get('email')
     if not email:
         return restful.params_error('请传递邮箱参数！')  # 因为数据是通过AJXA传输的，所以要返回json格式的数据
@@ -165,10 +165,10 @@ def email_captcha():
     message = Message('Python论坛邮箱验证码', recipients=[email], body='您的验证码是：%s' % captcha)
     try:
         mail.send(message)  # 同步的方式发送：可以通过URL来测试是否可以发送邮箱，接口是否能用
-        # send_mail.delay(message)
+        #send_mail.delay(message)
     except:
         return restful.server_error()
-    zlcache.set(email, captcha)  # 发送完验证码，将邮箱和验证码存储到memcache当中
+    zlcache.set(email, captcha)                   # 发送完验证码，将邮箱和验证码存储到memcache当中
     return restful.success()
 
 

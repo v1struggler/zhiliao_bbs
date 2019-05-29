@@ -33,7 +33,7 @@ class ResetEmailForm(BaseForm):
     def validate_captcha(self, field):
         captcha = field.data                    # 首先拿到captcha,此时field就代表captcha
         email = self.email.data                 # 拿到邮箱
-        captcha_cache = zlcache.get(email)
+        captcha_cache = zlcache.get(email)      # 到缓存中拿到邮箱对应的验证码
         if not captcha_cache or captcha.lower() != captcha_cache.lower():
             raise ValidationError('邮箱验证码错误！')
 

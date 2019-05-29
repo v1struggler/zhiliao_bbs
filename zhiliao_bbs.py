@@ -6,7 +6,7 @@ from apps.cms import bp as cms_bp
 from apps.front import bp as front_bp
 from apps.common import bp as common_bp
 import config
-from exts import db, mail
+from exts import db, mail, alidayu
 from flask_wtf import CSRFProtect
 
 
@@ -19,9 +19,10 @@ def create_app():
     app.register_blueprint(front_bp)
     app.register_blueprint(common_bp)
 
-    db.init_app(app)  # 将db注册进app
-    CSRFProtect(app)  # 将CSRFProtect()包装app
-    mail.init_app(app)   # 将mail与app进行绑定
+    db.init_app(app)                # 将db注册进app
+    CSRFProtect(app)                # 将CSRFProtect()包装app
+    mail.init_app(app)              # 将mail与app进行绑定
+    alidayu.init_app(app)           # 将阿里大于与app进行绑定
 
     return app
 

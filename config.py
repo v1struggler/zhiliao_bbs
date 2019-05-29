@@ -31,3 +31,10 @@ MAIL_USE_TLS = True                             # MAIL_USE_TLS：端口号587；
 MAIL_USERNAME = "714464655@qq.com"
 MAIL_PASSWORD = "xoexfxiqmddrbdhf"
 MAIL_DEFAULT_SENDER = "714464655@qq.com"
+
+
+# 阿里大于相关配置
+# ALIDAYU_accessKeyId = 'LTAI1xbBJ5n1iWSW'
+# ALIDAYU_accessSecret = 'wUXxTEP1zzKawWoVgwYsUCKSZExqQ1'
+# ALIDAYU_SignName = 'zlbbs论坛'
+# ALIDAYU_TemplateCode = 'SMS_166665344'
