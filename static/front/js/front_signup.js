@@ -16,40 +16,6 @@ $(function(){
 // });
 
 
-$(function () {
-    $("#sms-captcha-btn").click(function (event) {
-        event.preventDefault();                      // 按钮的默认行为：将表单的所有数据都发送到服务器，这里阻止表单的默认行为
-        var self = $(this);                          // 将this对象转化为jq对象
-        var telephone = $("input[name='telephone']").val();      // 拿到手机号码
-        if(!(/^1[345879]\d{9}$/.test(telephone))){               // 使用js正则来验证手机号码，如果不满足这个正则就return
-            zlalert.alertInfoToast('请输入正确的手机号码！');    // 这里用到了zlalert，需要将zlalert导入到前台模板中
-            return;
-        }
-
-        zlajax.get({
-            'url': '/common/sms_captcha?telephone='+telephone,
-            'success': function (data) {
-                if(data['code'] == 200){
-                    zlalert.alertSuccessToast('短信验证码发送成功！');
-                    self.attr("disabled",'disabled');            // 给按钮添加disabled属性，按钮就不能点击了
-                    var timeCount = 60;
-                    var timer = setInterval(function () {        // 倒计时(需要执行的函数，每隔多少毫秒执行一次 1s)
-                        timeCount--;
-                        self.text(timeCount);                    // 将值设置到按钮上
-                        if(timeCount <= 0){
-                            self.removeAttr('disabled');
-                            clearInterval(timer);                // 清除这个对象
-                            self.text('发送验证码');
-                        }
-                    },1000);
-                }else{
-                    zlalert.alertInfoToast(data['message']);
-                }
-            }
-        });
-    });
-});
-
 // $(function () {
 //     $("#sms-captcha-btn").click(function (event) {
 //         event.preventDefault();                      // 按钮的默认行为：将表单的所有数据都发送到服务器，这里阻止表单的默认行为
@@ -59,15 +25,9 @@ $(function () {
 //             zlalert.alertInfoToast('请输入正确的手机号码！');    // 这里用到了zlalert，需要将zlalert导入到前台模板中
 //             return;
 //         }
-//         var timestamp = (new Date).getTime();
-//         var sign = md5(timestamp+telephone+"q3423805gdflvbdfvhsdoa`#$%");
-//         zlajax.post({
-//             'url': '/c/sms_captcha/',
-//             'data':{
-//                 'telephone': telephone,
-//                 'timestamp': timestamp,
-//                 'sign': sign
-//             },
+//
+//         zlajax.get({
+//             'url': '/common/sms_captcha?telephone='+telephone,
 //             'success': function (data) {
 //                 if(data['code'] == 200){
 //                     zlalert.alertSuccessToast('短信验证码发送成功！');
@@ -89,6 +49,46 @@ $(function () {
 //         });
 //     });
 // });
+
+$(function () {
+    $("#sms-captcha-btn").click(function (event) {
+        event.preventDefault();                      // 按钮的默认行为：将表单的所有数据都发送到服务器，这里阻止表单的默认行为
+        var self = $(this);                          // 将this对象转化为jq对象
+        var telephone = $("input[name='telephone']").val();      // 拿到手机号码
+        if(!(/^1[345879]\d{9}$/.test(telephone))){               // 使用js正则来验证手机号码，如果不满足这个正则就return
+            zlalert.alertInfoToast('请输入正确的手机号码！');    // 这里用到了zlalert，需要将zlalert导入到前台模板中
+            return;
+        }
+        var timestamp = (new Date).getTime();
+        var sign = md5(timestamp+telephone+"q3423805gdflvbdfvhsdoa`#$%");
+        zlajax.post({
+            'url': '/common/sms_captcha/',
+            'data':{
+                'telephone': telephone,
+                'timestamp': timestamp,
+                'sign': sign
+            },
+            'success': function (data) {
+                if(data['code'] == 200){
+                    zlalert.alertSuccessToast('短信验证码发送成功！');
+                    self.attr("disabled",'disabled');            // 给按钮添加disabled属性，按钮就不能点击了
+                    var timeCount = 60;
+                    var timer = setInterval(function () {        // 倒计时(需要执行的函数，每隔多少毫秒执行一次 1s)
+                        timeCount--;
+                        self.text(timeCount);                    // 将值设置到按钮上
+                        if(timeCount <= 0){
+                            self.removeAttr('disabled');
+                            clearInterval(timer);                // 清除这个对象
+                            self.text('发送验证码');
+                        }
+                    },1000);
+                }else{
+                    zlalert.alertInfoToast(data['message']);
+                }
+            }
+        });
+    });
+});
 
 // $(function(){
 //     $("#submit-btn").click(function(event){

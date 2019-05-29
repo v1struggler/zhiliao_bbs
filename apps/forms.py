@@ -10,5 +10,5 @@ class BaseForm(Form):
         message = self.errors.popitem()[1][0]
         return message
 
-    # def validate(self):
-    #     return super(BaseForm, self).validate()
+    def validate(self):     # 重写父类的验证器，调用父类的验证器
+        return super(BaseForm, self).validate()
