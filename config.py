@@ -21,6 +21,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False          # 与跟踪相关，True：一�
 SECRET_KEY = os.urandom(24)
 # session中key的标识
 CMS_USER_ID = 'ASDFASDFSA'
+FRONT_USER_ID = 'fasdfsfdfsfsd'
 
 
 # 邮箱服务器配置

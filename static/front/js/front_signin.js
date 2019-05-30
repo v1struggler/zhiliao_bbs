@@ -1,6 +1,4 @@
-/**
- * Created by hynev on 2017/12/26.
- */
+
 
 $(function(){
     $("#submit-btn").click(function (event) {
