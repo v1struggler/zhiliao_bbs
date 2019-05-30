@@ -16,6 +16,7 @@ $(function(){
 // });
 
 
+// get的方式请求发送验证码
 // $(function () {
 //     $("#sms-captcha-btn").click(function (event) {
 //         event.preventDefault();                      // 按钮的默认行为：将表单的所有数据都发送到服务器，这里阻止表单的默认行为
@@ -50,6 +51,8 @@ $(function(){
 //     });
 // });
 
+
+// post加盐的方式请求发送验证码，代码上线可以采用js混淆的方式加密代码
 $(function () {
     $("#sms-captcha-btn").click(function (event) {
         event.preventDefault();                      // 按钮的默认行为：将表单的所有数据都发送到服务器，这里阻止表单的默认行为
@@ -90,48 +93,50 @@ $(function () {
     });
 });
 
-// $(function(){
-//     $("#submit-btn").click(function(event){
-//         event.preventDefault();
-//         var telephone_input = $("input[name='telephone']");
-//         var sms_captcha_input = $("input[name='sms_captcha']");
-//         var username_input = $("input[name='username']");
-//         var password1_input = $("input[name='password1']");
-//         var password2_input = $("input[name='password2']");
-//         var graph_captcha_input = $("input[name='graph_captcha']");
-//
-//         var telephone = telephone_input.val();
-//         var sms_captcha = sms_captcha_input.val();
-//         var username = username_input.val();
-//         var password1 = password1_input.val();
-//         var password2 = password2_input.val();
-//         var graph_captcha = graph_captcha_input.val();
-//
-//         zlajax.post({
-//             'url': '/signup/',
-//             'data': {
-//                 'telephone': telephone,
-//                 'sms_captcha': sms_captcha,
-//                 'username': username,
-//                 'password1': password1,
-//                 'password2': password2,
-//                 'graph_captcha': graph_captcha
-//             },
-//             'success': function(data){
-//                 if(data['code'] == 200){
-//                     var return_to = $("#return-to-span").text();
-//                     if(return_to){
-//                         window.location = return_to;
-//                     }else{
-//                         window.location = '/';
-//                     }
-//                 }else{
-//                     zlalert.alertInfo(data['message']);
-//                 }
-//             },
-//             'fail': function(){
-//                 zlalert.alertNetworkError();
-//             }
-//         });
-//     });
-// });
+
+// 验证和提交注册信息
+$(function(){
+    $("#submit-btn").click(function(event){
+        event.preventDefault();             // 如果不阻止表单的默认行为，一点提交按钮，就直接会把表单中的数据提交到后台
+        var telephone_input = $("input[name='telephone']");
+        var sms_captcha_input = $("input[name='sms_captcha']");
+        var username_input = $("input[name='username']");
+        var password1_input = $("input[name='password1']");
+        var password2_input = $("input[name='password2']");
+        var graph_captcha_input = $("input[name='graph_captcha']");
+
+        var telephone = telephone_input.val();          // 为什么不直接一步就获取表单里面的值呢？当表单里面的验证码等信息不正确的时候，可以将表单里面的值，清空掉
+        var sms_captcha = sms_captcha_input.val();
+        var username = username_input.val();
+        var password1 = password1_input.val();
+        var password2 = password2_input.val();
+        var graph_captcha = graph_captcha_input.val();
+
+        zlajax.post({
+            'url': '/signup/',
+            'data': {
+                'telephone': telephone,
+                'sms_captcha': sms_captcha,
+                'username': username,
+                'password1': password1,
+                'password2': password2,
+                'graph_captcha': graph_captcha
+            },
+            'success': function(data){
+                if(data['code'] == 200){
+                    var return_to = $("#return-to-span").text();
+                    if(return_to){
+                        window.location = return_to;            // 跳转到上一个页面
+                    }else{
+                        window.location = '/';                  // 跳转到首页
+                    }
+                }else{
+                    zlalert.alertInfo(data['message']);
+                }
+            },
+            'fail': function(){
+                zlalert.alertNetworkError();
+            }
+        });
+    });
+});
