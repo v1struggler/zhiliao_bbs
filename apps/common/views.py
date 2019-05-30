@@ -19,7 +19,7 @@ def index():
 @bp.route('/captcha/')
 def graph_captcha():
     text, image = Captcha.gene_graph_captcha()  # 获取验证码
-    zlcache.set(text.lower(), text.lower())
+    zlcache.set(text.lower(), text.lower())         # 将验证码作为key将验证码存储到缓存，储存成小写形式
     out = BytesIO()  # 创建字节流
     image.save(out, 'png')  # 将图片存储到字节流当中，格式为png
     out.seek(0)  # 将文件流的指针放在0的位置
@@ -55,9 +55,11 @@ def sms_captcha():
         captcha = Captcha.gene_text(number=4)
         print('发送的短信验证码是：', captcha)
         if demo.alidayu(telephone, captcha):
+            zlcache.set(telephone, captcha)      # 将手机号作为key，将验证码保存到缓存中
             return restful.success()
         else:
             #return restful.params_error(message='短信验证码发送失败！')
+            zlcache.set(telephone, captcha)      # 开发测试：即使由于限制验证码发送失败也可以保存验证码到缓存
             return restful.success()
     else:
         return restful.params_error(message='参数错误！')
