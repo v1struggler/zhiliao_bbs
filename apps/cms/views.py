@@ -44,6 +44,12 @@ def profile():
     return render_template('cms/cms_profile.html')
 
 
+@bp.route('/banners/')
+@login_required
+def banners():
+    return render_template('cms/cms_banners.html')
+
+
 @bp.route('/posts/')
 @login_required
 @permission_required(CMSPersmission.POSTER)

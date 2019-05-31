@@ -17,8 +17,9 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = False          # 与跟踪相关，True：一旦模型被改变都会给你发送信号；
 
 
-# 使用session就需要设置SECRET_KEY
-SECRET_KEY = os.urandom(24)
+# 使用session就需要设置SECRET_KEY用来解析session数据的，每次项目重启的时候都会重新输入密码：因为SECRET_KEY的值就变了；
+#SECRET_KEY = os.urandom(24)
+SECRET_KEY = "dsfasfsdgdfhgsdfsdft"     # 为了测试方便写死
 # session中key的标识
 CMS_USER_ID = 'ASDFASDFSA'
 FRONT_USER_ID = 'fasdfsfdfsfsd'

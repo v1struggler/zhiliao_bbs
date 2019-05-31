@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}{% endblock %}</title>
-    {% include "common/_heads.html" %}
+    {% include "common/_heads.html" %}        {#js导包的顺序非常关键，jq在base.js之前导入，因为用到了#}
     <link rel="stylesheet" href="{{ static('cms/css/base.css') }}">
     <script src="{{ static('cms/js/base.js') }}"></script>
     {% block head %}{% endblock %}
@@ -52,6 +52,7 @@
                 </li>
 
                 {% set cms_user = g.cms_user %}
+                <li class="nav-group banner-manage"><a href="{{ url_for('cms.banners') }}">轮播图管理</a></li>
                 {% if cms_user.has_permission(CMSPermission.POSTER) %}
                     <li class="nav-group post-manage"><a href="{{ url_for('cms.posts') }}">帖子管理</a></li>
                 {% endif %}
