@@ -14,7 +14,8 @@ from flask import (
 )
 
 from .models import CMSUser, CMSPersmission
-from .forms import LoginForm, ResetpwdForm, ResetEmailForm
+from ..models import BannerModel
+from .forms import LoginForm, ResetpwdForm, ResetEmailForm, AddBannerForm
 from .decorators import login_required, permission_required
 import config
 from exts import db, mail
@@ -48,6 +49,23 @@ def profile():
 @login_required
 def banners():
     return render_template('cms/cms_banners.html')
+
+
+@bp.route('/abanner/', methods=['POST'])
+@login_required
+def abanner():
+    form = AddBannerForm(request.form)
+    if form.validate():
+        name = form.name.data
+        image_url = form.image_url.data
+        link_url = form.link_url.data
+        priority = form.priority.data
+        banner = BannerModel(name=name, image_url=image_url, link_url=link_url, priority=priority)
+        db.session.add(banner)
+        db.session.commit()
+        return restful.success()
+    else:
+        return restful.params_error(message=form.get_error())
 
 
 @bp.route('/posts/')
