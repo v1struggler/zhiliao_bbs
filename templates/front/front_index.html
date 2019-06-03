@@ -21,7 +21,7 @@
           <!-- 轮播图 -->
           <div class="carousel-inner" role="listbox">
               {% for banner in banners %}
-                  {% if loop.first %}
+                  {% if loop.first %}        <!-- 如果是第一个就显示 class="item active"-->
                     <div class="item active">
                   {% else %}
                       <div class="item">

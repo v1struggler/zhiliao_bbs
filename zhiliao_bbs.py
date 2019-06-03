@@ -10,7 +10,6 @@ from exts import db, mail, alidayu
 from flask_wtf import CSRFProtect
 
 
-# 定义工厂函数？？？ 为什么
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
