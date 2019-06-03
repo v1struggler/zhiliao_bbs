@@ -15,7 +15,7 @@ from flask import (
 
 from .models import CMSUser, CMSPersmission
 from ..models import BannerModel
-from .forms import LoginForm, ResetpwdForm, ResetEmailForm, AddBannerForm
+from .forms import LoginForm, ResetpwdForm, ResetEmailForm, AddBannerForm, UpdateBannerForm
 from .decorators import login_required, permission_required
 import config
 from exts import db, mail
@@ -67,6 +67,46 @@ def abanner():
         return restful.success()
     else:
         return restful.params_error(message=form.get_error())
+
+
+@bp.route('/ubanner/', methods=['POST'])
+@login_required
+def ubanner():
+    form = UpdateBannerForm(request.form)
+    if form.validate():
+        banner_id = form.banner_id.data
+        name = form.name.data
+        image_url = form.image_url.data
+        link_url = form.link_url.data
+        priority = form.priority.data
+        banner = BannerModel.query.get(banner_id)
+        if banner:
+            banner.name = name
+            banner.image_url = image_url
+            banner.link_url = link_url
+            banner.priority = priority
+            db.session.commit()
+            return restful.success()
+        else:
+            return restful.params_error(message='没有这个轮播图！')
+    else:
+        return restful.params_error(message=form.get_error())
+
+
+@bp.route('/dbanner/', methods=['POST'])
+@login_required
+def dbanner():
+    banner_id = request.form.get('banner_id')
+    if not banner_id:
+        return restful.params_error(message='请传入轮播图id！')
+
+    banner = BannerModel.query.get(banner_id)
+    if not banner:
+        return restful.params_error(message='没有这个轮播图！')
+
+    db.session.delete(banner)
+    db.session.commit()
+    return restful.success()
 
 
 @bp.route('/posts/')

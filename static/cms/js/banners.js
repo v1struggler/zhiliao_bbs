@@ -1,3 +1,4 @@
+// 监听保存按钮
 $(function () {
     $("#save-banner-btn").click(function (event) {
         event.preventDefault();
@@ -23,7 +24,7 @@ $(function () {
 
         var url = '';
         if (submitType == 'update') {
-            url = '/cms/ubanner/';
+            url = '/cms/ubanner/';            // 判断是否是更新和添加操作
         } else {
             url = '/cms/abanner/';
         }
@@ -54,25 +55,26 @@ $(function () {
     });
 });
 
+// 监听编辑按钮
 $(function () {
     $(".edit-banner-btn").click(function (event) {
         var self = $(this);
-        var dialog = $("#banner-dialog");
+        var dialog = $("#banner-dialog");      // 监听模态对话框，并且显示
         dialog.modal("show");
 
         var tr = self.parent().parent();
-        var name = tr.attr("data-name");
+        var name = tr.attr("data-name");                   // 将数据绑定到tr标签
         var image_url = tr.attr("data-image");
         var link_url = tr.attr("data-link");
         var priority = tr.attr("data-priority");
 
-        var nameInput = dialog.find("input[name='name']");
+        var nameInput = dialog.find("input[name='name']");        // 找到标签
         var imageInput = dialog.find("input[name='image_url']");
         var linkInput = dialog.find("input[name='link_url']");
         var priorityInput = dialog.find("input[name='priority']");
         var saveBtn = dialog.find("#save-banner-btn");
 
-        nameInput.val(name);
+        nameInput.val(name);          // 给标签赋值
         imageInput.val(image_url);
         linkInput.val(link_url);
         priorityInput.val(priority);
@@ -81,6 +83,7 @@ $(function () {
     });
 });
 
+// 监听删除
 $(function () {
     $(".delete-banner-btn").click(function (event) {
         var self = $(this);
