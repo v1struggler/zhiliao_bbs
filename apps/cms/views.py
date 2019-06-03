@@ -48,7 +48,8 @@ def profile():
 @bp.route('/banners/')
 @login_required
 def banners():
-    return render_template('cms/cms_banners.html')
+    banners = BannerModel.query.order_by(BannerModel.priority.desc()).all()
+    return render_template('cms/cms_banners.html', banners=banners)
 
 
 @bp.route('/abanner/', methods=['POST'])

@@ -1,7 +1,3 @@
-/**
- * Created by hynev on 2017/12/28.
- */
-
 $(function () {
     $("#save-banner-btn").click(function (event) {
         event.preventDefault();
@@ -20,33 +16,34 @@ $(function () {
         var submitType = self.attr('data-type');
         var bannerId = self.attr("data-id");
 
-        if(!name || !image_url || !link_url || !priority){
+        if (!name || !image_url || !link_url || !priority) {
             zlalert.alertInfoToast('请输入完整的轮播图数据！');
             return;
         }
 
         var url = '';
-        if(submitType == 'update'){
+        if (submitType == 'update') {
             url = '/cms/ubanner/';
-        }else{
+        } else {
             url = '/cms/abanner/';
         }
 
+        // 封装了csrf-token，就不用关心了
         zlajax.post({
             "url": url,
-            'data':{
-                'name':name,
+            'data': {
+                'name': name,
                 'image_url': image_url,
                 'link_url': link_url,
-                'priority':priority,
+                'priority': priority,
                 'banner_id': bannerId
             },
             'success': function (data) {
-                dialog.modal("hide");
-                if(data['code'] == 200){
+                dialog.modal("hide");        // 隐藏模态对话框
+                if (data['code'] == 200) {
                     // 重新加载这个页面
                     window.location.reload();
-                }else{
+                } else {
                     zlalert.alertInfo(data['message']);
                 }
             },
@@ -79,8 +76,8 @@ $(function () {
         imageInput.val(image_url);
         linkInput.val(link_url);
         priorityInput.val(priority);
-        saveBtn.attr("data-type",'update');
-        saveBtn.attr('data-id',tr.attr('data-id'));
+        saveBtn.attr("data-type", 'update');
+        saveBtn.attr('data-id', tr.attr('data-id'));
     });
 });
 
@@ -90,17 +87,17 @@ $(function () {
         var tr = self.parent().parent();
         var banner_id = tr.attr('data-id');
         zlalert.alertConfirm({
-            "msg":"您确定要删除这个轮播图吗？",
+            "msg": "您确定要删除这个轮播图吗？",
             'confirmCallback': function () {
                 zlajax.post({
                     'url': '/cms/dbanner/',
-                    'data':{
+                    'data': {
                         'banner_id': banner_id
                     },
                     'success': function (data) {
-                        if(data['code'] == 200){
+                        if (data['code'] == 200) {
                             window.location.reload();
-                        }else{
+                        } else {
                             zlalert.alertInfo(data['message']);
                         }
                     }
@@ -115,7 +112,7 @@ $(function () {
         'domain': 'http://7xqenu.com1.z0.glb.clouddn.com/',
         'browse_btn': 'upload-btn',
         'uptoken_url': '/c/uptoken/',
-        'success': function (up,file,info) {
+        'success': function (up, file, info) {
             var imageInput = $("input[name='image_url']");
             imageInput.val(file.name);
         }

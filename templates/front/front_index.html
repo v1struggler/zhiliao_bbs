@@ -20,17 +20,17 @@
 
           <!-- 轮播图 -->
           <div class="carousel-inner" role="listbox">
-{#              {% for banner in banners %}#}
-{#                  {% if loop.first %}#}
-{#                    <div class="item active">#}
-{#                  {% else %}#}
-{#                      <div class="item">#}
-{#                  {% endif %}#}
-{#                    <a href="{{ banner.link_url }}">#}
-{#                        <img src="{{ banner.image_url }}" alt="...">#}
-{#                    </a>#}
-{#                    </div>#}
-{#              {% endfor %}#}
+              {% for banner in banners %}
+                  {% if loop.first %}
+                    <div class="item active">
+                  {% else %}
+                      <div class="item">
+                  {% endif %}
+                    <a href="{{ banner.link_url }}">
+                        <img src="{{ banner.image_url }}" alt="...">
+                    </a>
+                    </div>
+              {% endfor %}
           </div>
 
           <!-- 左右切换的控制按钮 -->
