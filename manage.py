@@ -6,6 +6,7 @@ from zhiliao_bbs import create_app
 from exts import db
 from apps.cms import models as cms_models  # 只要导入模块就能映射模块里面的所有模型
 from apps.front import models as front_models
+from apps.models import BannerModel, BoardModel
 
 app = create_app()
 manager = Manager(app)              # 创建manager需要绑定app

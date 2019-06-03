@@ -1,6 +1,3 @@
-/**
- * Created by hynev on 2017/12/29.
- */
 
 $(function () {
     $("#add-board-btn").click(function (event) {
@@ -26,6 +23,7 @@ $(function () {
         });
     });
 });
+
 
 $(function () {
     $(".edit-board-btn").click(function () {
