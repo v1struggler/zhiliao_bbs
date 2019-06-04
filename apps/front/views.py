@@ -26,9 +26,12 @@ bp = Blueprint("front", __name__)
 def index():
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
+    posts = PostModel.query.all()
+
     context = {
         'banners': banners,
-        'boards': boards
+        'boards': boards,
+        'posts': posts,
     }
     return render_template('front/front_index.html', **context)
 

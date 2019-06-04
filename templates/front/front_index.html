@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block body %}
-     <div class="lg-container">
+    <div class="lg-container">
         <div id="carousel-example-generic" class="carousel slide index-banner" data-ride="carousel">
           <!-- 指示器 -->
           <ol class="carousel-indicators">
@@ -21,7 +21,7 @@
           <!-- 轮播图 -->
           <div class="carousel-inner" role="listbox">
               {% for banner in banners %}
-                  {% if loop.first %}        <!-- 如果是第一个就显示 class="item active"-->
+                  {% if loop.first %}
                     <div class="item active">
                   {% else %}
                       <div class="item">
@@ -29,7 +29,7 @@
                     <a href="{{ banner.link_url }}">
                         <img src="{{ banner.image_url }}" alt="...">
                     </a>
-                    </div>
+                </div>
               {% endfor %}
           </div>
 
@@ -43,61 +43,73 @@
             <span class="sr-only">Next</span>
           </a>
         </div>
-
-        <div class="post-group" id="list">
-            <ul class="post-head">
-                <li class="active">
-                    <a href="/#list">最新</a>
-                </li>
-                <li>
-                    <a href="#">精华帖子</a>
-                </li>
-                <li>
-                    <a href="#">点赞最多</a>
-                </li>
-                <li>
-                    <a href="#">评论最多</a>
-                </li>
+        <div class="post-group">
+            <ul class="post-group-head">
+                {% if current_sort == 1 %}
+                    <li class="active"><a href="#">最新</a></li>
+                {% else %}
+                    <li><a href="#">最新</a></li>
+                {% endif %}
+                {% if current_sort == 2 %}
+                    <li class="active"><a href="#">精华帖子</a></li>
+                {% else %}
+                    <li><a href="#">精华帖子</a></li>
+                {% endif %}
+                {% if current_sort == 3 %}
+                    <li class="active"><a href="#">点赞最多</a></li>
+                {% else %}
+                    <li><a href="#">点赞最多</a></li>
+                {% endif %}
+                {% if current_sort == 4 %}
+                    <li class="active"><a href="#">评论最多</a></li>
+                {% else %}
+                    <li><a href="#">评论最多</a></li>
+                {% endif %}
             </ul>
-            <div class="post-list-group">
-                <ul class="post-list-ul">
-                    {% for post in posts %}
-                        <li>
-                            <div class="user-image-group">
-                                <img src="#" alt="">
-                            </div>
-                            <div class="post-info-group">
-                                <p class="post-title">
-                                    <a href="#">{{ post.title }}</a>
-                                    {% if post.highlight %}
-                                        <span class="label label-danger">精华帖</span>
-                                    {% endif %}
-                                </p>
-                                <p class="post-info">
-                                    <span>#</span>
-                                    <span>#</span>
-                                    <span>评论:0</span>
-                                    <span>阅读:0</span>
-                                </p>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <div class="page-group" style="text-align:center;">
-{#                    {{ pagination.links }}#}
-                </div>
+            <ul class="post-list-group">
+                {% for post in posts %}
+                    <li>
+                        <div class="author-avatar-group">
+                            <img src="{{ post.author.avatar or url_for('static',filename='common/images/logo.png') }}" alt="">
+                        </div>
+                        <div class="post-info-group">
+                            <p class="post-title">
+                                <a href="#">{{ post.title }}</a>
+                                {% if post.highlight %}
+                                    <span class="label label-danger">精华帖</span>
+                                {% endif %}
+                            </p>
+                            <p class="post-info">
+                                <span>作者:{{ post.author.username }}</span>
+                                <span>发表时间:{{ post.create_time }}</span>
+                                <span>评论:0</span>
+                                <span>阅读:0</span>
+                            </p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div style="text-align:center;">
+{#                {{ pagination.links }}#}
             </div>
         </div>
     </div>
-
     <div class="sm-container">
-        <div class="form-group">
+        <div style="padding-bottom:10px;">
             <a href="{{ url_for("front.apost") }}" class="btn btn-warning btn-block">发布帖子</a>
         </div>
         <div class="list-group">
-          <a href="#" class="list-group-item active">所有板块</a>
+            {% if current_board %}
+                <a href="/" class="list-group-item">所有板块</a>
+            {% else %}
+                <a href="/" class="list-group-item active">所有板块</a>
+            {% endif %}
           {% for board in boards %}
-              <a href="#" class="list-group-item">{{ board.name }}</a>
+              {% if board.id == current_board %}
+                  <a href="{{ url_for("front.index",bd=board.id) }}" class="list-group-item active">{{ board.name }}</a>
+              {% else %}
+                  <a href="{{ url_for("front.index",bd=board.id) }}" class="list-group-item">{{ board.name }}</a>
+              {% endif %}
           {% endfor %}
         </div>
     </div>

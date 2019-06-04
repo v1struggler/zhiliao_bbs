@@ -31,7 +31,7 @@ from io import BytesIO
 
 bp = Blueprint('ueditor', __name__, url_prefix='/ueditor')
 
-UEDITOR_UPLOAD_PATH = ""
+UEDITOR_UPLOAD_PATH = r"D:\Desktop\project\zhiliao_bbs\apps\ueditor\images"
 UEDITOR_UPLOAD_TO_QINIU = False
 UEDITOR_QINIU_ACCESS_KEY = ""
 UEDITOR_QINIU_SECRET_KEY = ""
