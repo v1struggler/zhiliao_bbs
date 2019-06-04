@@ -40,3 +40,11 @@ MAIL_DEFAULT_SENDER = "714464655@qq.com"
 # ALIDAYU_accessSecret = 'wUXxTEP1zzKawWoVgwYsUCKSZExqQ1'
 # ALIDAYU_SignName = 'zlbbs论坛'
 # ALIDAYU_TemplateCode = 'SMS_166665344'
+
+
+# UEditor的相关配置
+UEDITOR_UPLOAD_TO_QINIU = True
+UEDITOR_QINIU_ACCESS_KEY = "hIIQhoJNoE1w8HxhxSbcALjmswIAtEEMHp4rjHLx"
+UEDITOR_QINIU_SECRET_KEY = "7orA-_FhlF7U4BQ8wlr-MkDq9NfvRWmFNOEAaH-8"
+UEDITOR_QINIU_BUCKET_NAME = "v1struggler"
+UEDITOR_QINIU_DOMAIN = "http://pskbjhvil.bkt.clouddn.com/"
