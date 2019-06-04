@@ -110,11 +110,13 @@ $(function () {
     });
 });
 
+
+// 初始化七牛
 $(function () {
     zlqiniu.setUp({
-        'domain': 'http://7xqenu.com1.z0.glb.clouddn.com/',
+        'domain': 'http://pskbjhvil.bkt.clouddn.com/',
         'browse_btn': 'upload-btn',
-        'uptoken_url': '/c/uptoken/',
+        'uptoken_url': '/common/uptoken/',
         'success': function (up, file, info) {
             var imageInput = $("input[name='image_url']");
             imageInput.val(file.name);
