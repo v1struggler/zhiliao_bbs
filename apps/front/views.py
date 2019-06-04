@@ -15,6 +15,7 @@ from .forms import SignupForm, SigninForm, AddPostForm
 from .models import FrontUser
 from ..models import BannerModel, BoardModel, PostModel
 from .decorators import login_required
+from flask_paginate import Pagination,get_page_parameter
 from exts import db
 from utils import restful, safeutils
 import config
@@ -24,14 +25,48 @@ bp = Blueprint("front", __name__)
 
 @bp.route('/')
 def index():
+    board_id = request.args.get('bd', type=int, default=None)
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    sort = request.args.get("st", type=int, default=1)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
-    posts = PostModel.query.all()
+    start = (page - 1) * config.PER_PAGE  # 帖子开始位置
+    end = start + config.PER_PAGE  # 帖子结束位置
+    pasts = None
+    total = 0
 
+    query_obj = None
+    if sort == 1:
+        query_obj = PostModel.query.order_by(PostModel.create_time.desc())
+    elif sort == 2:
+        pass
+        # 按照加精的时间倒叙排序
+        # query_obj = db.session.query(PostModel).outerjoin(HighlightPostModel).order_by(
+        #     HighlightPostModel.create_time.desc(), PostModel.create_time.desc())
+    elif sort == 3:
+        # 按照点赞的数量排序
+        query_obj = PostModel.query.order_by(PostModel.create_time.desc())
+    elif sort == 4:
+        pass
+        # 按照评论的数量排序
+        # query_obj = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
+        #     func.count(CommentModel.id).desc(), PostModel.create_time.desc())
+
+    if board_id:
+        query_obj = query_obj.filter(PostModel.board_id == board_id)
+        posts = query_obj.slice(start, end)
+        total = query_obj.count()
+    else:
+        posts = query_obj.slice(start, end)
+        total = query_obj.count()
+    pagination = Pagination(bs_version=3, page=page, total=total, outer_window=0, inner_window=2)
     context = {
         'banners': banners,
         'boards': boards,
         'posts': posts,
+        'pagination': pagination,
+        'current_board': board_id,
+        'current_sort': sort
     }
     return render_template('front/front_index.html', **context)
 

@@ -6,7 +6,7 @@ from zhiliao_bbs import create_app
 from exts import db
 from apps.cms import models as cms_models  # 只要导入模块就能映射模块里面的所有模型
 from apps.front import models as front_models
-from apps.models import BannerModel, BoardModel
+from apps.models import BannerModel, BoardModel, PostModel
 
 app = create_app()
 manager = Manager(app)              # 创建manager需要绑定app
@@ -89,6 +89,21 @@ def create_front_user(telephone, username, password):
     db.session.commit()
 
 
+@manager.command
+def create_test_post():
+    for x in range(1,205):
+        title = '标题%s'%x
+        content = '内容：%s' % x
+        board = BoardModel.query.first()
+        author = FrontUser.query.first()
+        post = PostModel(title=title,content=content)
+        post.board = board
+        post.author = author
+        db.session.add(post)
+        db.session.commit()
+    print('恭喜！测试帖子添加成功！')
+
+
 if __name__ == '__main__':
     # python manage.py db init   初始化
     # python manage.py db migrate    创建迁移脚本
@@ -103,4 +118,6 @@ if __name__ == '__main__':
     # python manage.py add_user_to_role -e 714464656@qq.com -n 访问者
 
     # python manage.py create_front_user -t 13309567820 -u zhiliao -p 123456
+
+    # python manage.py create_test_post
     manager.run()

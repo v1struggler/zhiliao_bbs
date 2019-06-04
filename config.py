@@ -49,3 +49,7 @@ UEDITOR_QINIU_SECRET_KEY = "7orA-_FhlF7U4BQ8wlr-MkDq9NfvRWmFNOEAaH-8"
 UEDITOR_QINIU_BUCKET_NAME = "v1struggler"
 UEDITOR_QINIU_DOMAIN = "http://pskbjhvil.bkt.clouddn.com/"
 UEDITOR_UPLOAD_PATH = r"images"
+
+
+# flask-paginate的相关配置
+PER_PAGE = 10
