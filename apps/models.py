@@ -39,6 +39,15 @@ class PostModel(db.Model):
     }
 
 
+class HighlightPostModel(db.Model):
+    __tablename__ = 'highlight_post'
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    post_id = db.Column(db.Integer,db.ForeignKey("post.id"))
+    create_time = db.Column(db.DateTime,default=datetime.now)
+
+    post = db.relationship("PostModel",backref="highlight")
+
+
 class CommentModel(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

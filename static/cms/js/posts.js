@@ -1,6 +1,4 @@
-/**
- * Created by hynev on 2018/1/4.
- */
+
 
 $(function () {
     $(".highlight-btn").click(function (event) {
@@ -23,7 +21,7 @@ $(function () {
             'success': function (data) {
                 if(data['code'] == 200){
                     zlalert.alertSuccessToast('操作成功！');
-                    setTimeout(function () {
+                    setTimeout(function () {        // 延迟执行这样可以加载提示框，不然立马就重新加载了
                         window.location.reload();
                     },500);
                 }else{
