@@ -97,6 +97,14 @@ def apost():
             return restful.params_error(message=form.get_error())
 
 
+@bp.route('/p/<post_id>/')
+def post_detail(post_id):
+    post = PostModel.query.get(post_id)
+    if not post:
+        abort(404)    # 跳转到404
+    return render_template('front/front_pdetail.html', post=post)
+
+
 class SignupView(views.MethodView):
 
     def get(self):
