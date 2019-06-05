@@ -52,6 +52,7 @@ def index():
         # query_obj = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
         #     func.count(CommentModel.id).desc(), PostModel.create_time.desc())
 
+    # 板块id是请求发送过来的参数，根据板块id来筛选帖子
     if board_id:
         query_obj = query_obj.filter(PostModel.board_id == board_id)
         posts = query_obj.slice(start, end)
