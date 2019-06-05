@@ -13,11 +13,12 @@ from flask import (
 
 from .forms import SignupForm, SigninForm, AddPostForm, AddCommentForm
 from .models import FrontUser
-from ..models import BannerModel, BoardModel, PostModel, CommentModel
+from ..models import BannerModel, BoardModel, PostModel, CommentModel, HighlightPostModel
 from .decorators import login_required
 from flask_paginate import Pagination,get_page_parameter
 from exts import db
 from utils import restful, safeutils
+from sqlalchemy.sql import func
 import config
 
 bp = Blueprint("front", __name__)
@@ -39,18 +40,16 @@ def index():
     if sort == 1:
         query_obj = PostModel.query.order_by(PostModel.create_time.desc())
     elif sort == 2:
-        pass
         # 按照加精的时间倒叙排序
-        # query_obj = db.session.query(PostModel).outerjoin(HighlightPostModel).order_by(
-        #     HighlightPostModel.create_time.desc(), PostModel.create_time.desc())
+        query_obj = db.session.query(PostModel).outerjoin(HighlightPostModel).order_by(
+            HighlightPostModel.create_time.desc(), PostModel.create_time.desc())
     elif sort == 3:
         # 按照点赞的数量排序
         query_obj = PostModel.query.order_by(PostModel.create_time.desc())
     elif sort == 4:
-        pass
         # 按照评论的数量排序
-        # query_obj = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
-        #     func.count(CommentModel.id).desc(), PostModel.create_time.desc())
+        query_obj = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
+            func.count(CommentModel.id).desc(), PostModel.create_time.desc())
 
     # 板块id是请求发送过来的参数，根据板块id来筛选帖子
     if board_id:
