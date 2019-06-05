@@ -37,3 +37,16 @@ class PostModel(db.Model):
     __mapper_args__ = {
         "order_by": create_time.desc()
     }
+
+
+class CommentModel(db.Model):
+    __tablename__ = 'comment'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+    author_id = db.Column(db.String(100), db.ForeignKey("front_user.id"), nullable=False)
+
+    # orm层的关系
+    post = db.relationship("PostModel", backref='comments')
+    author = db.relationship("FrontUser", backref='comments')

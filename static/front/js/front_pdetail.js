@@ -23,8 +23,8 @@ $(function () {
 $(function () {
     $("#comment-btn").click(function (event) {
         event.preventDefault();
-        var userBtn = $("#user-btn").html();
-        if(!userBtn){
+        var logintag = $("#login-tag").attr('data-is-login');   // 找到具体的标签，不然会返回一个jq对象
+        if(!logintag){
             // 跳转到登录页面
             window.location = '/signin/';
         }else{
