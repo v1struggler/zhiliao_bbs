@@ -7,6 +7,7 @@ from io import BytesIO
 from .forms import SMSCaptchaForm
 import qiniu
 from exts import alidayu
+# from tasks import send_sms_captcha
 
 bp = Blueprint("common", __name__, url_prefix='/common')
 
@@ -55,13 +56,14 @@ def sms_captcha():
         telephone = form.telephone.data
         captcha = Captcha.gene_text(number=4)
         print('发送的短信验证码是：', captcha)
+        # send_sms_captcha(telephone, captcha)     异步发送手机验证码
         if demo.alidayu(telephone, captcha):
             zlcache.set(telephone, captcha)  # 将手机号作为key，将验证码保存到缓存中
             return restful.success()
         else:
             # return restful.params_error(message='短信验证码发送失败！')
             zlcache.set(telephone, captcha)  # 开发测试：即使由于限制验证码发送失败也可以保存验证码到缓存
-            return restful.success()
+        return restful.success()
     else:
         return restful.params_error(message='参数错误！')
 

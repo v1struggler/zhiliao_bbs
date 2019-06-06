@@ -22,6 +22,7 @@ from exts import db, mail
 from flask_mail import Message
 from utils import restful, zlcache
 import string
+from tasks import send_mail
 
 bp = Blueprint("cms", __name__, url_prefix='/cms')
 
@@ -313,10 +314,10 @@ def email_captcha():
     captcha = "".join(random.sample(source, 6))
 
     # 给这个邮箱发送邮件
-    message = Message('Python论坛邮箱验证码', recipients=[email], body='您的验证码是：%s' % captcha)
+    #message = Message('Python论坛邮箱验证码', recipients=[email], body='您的验证码是：%s' % captcha)
     try:
-        mail.send(message)  # 同步的方式发送：可以通过URL来测试是否可以发送邮箱，接口是否能用
-        #send_mail.delay(message)
+        #mail.send(message)  # 同步的方式发送：可以通过URL来测试是否可以发送邮箱，接口是否能用
+        send_mail.delay(subject='Python论坛邮箱验证码', recipients=[email], body='您的验证码是：%s' % captcha)
     except:
         return restful.server_error()
     zlcache.set(email, captcha)                   # 发送完验证码，将邮箱和验证码存储到memcache当中
